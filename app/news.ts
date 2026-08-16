@@ -1,0 +1,60 @@
+import type { NewsItem } from "./news-types";
+import { newsCatalog as s1Catalog, keywordNews as s1Map } from "./stage1-news";
+import { newsCatalog as s2Catalog, keywordNews as s2Map } from "./stage2-news";
+import { newsCatalog as s3Catalog, keywordNews as s3Map } from "./stage3-news";
+import { newsCatalog as s4Catalog, keywordNews as s4Map } from "./stage4-news";
+
+export type { NewsItem };
+
+export interface StageNews {
+  id: number;
+  title: string;
+  catalog: Record<string, NewsItem>;
+  keywordMap: Record<string, string[]>;
+  /** 是否已完成人工核验（stage2 为逐条手写核验；stage1/3 由素材自动构建；stage4 为原始链接，待核验） */
+  verified: boolean;
+}
+
+export const stageMeta: Record<number, { title: string; newsNote: string }> = {
+  1: { title: "萌芽期", newsNote: "2017—2019 官方案例链接汇编（与萌芽期年份一致）" },
+  2: { title: "发展期", newsNote: "案例报道发布于 2022—2023 年（对应发展期话术的典型案件）" },
+  3: { title: "升级期", newsNote: "2022—2023 公开反诈报道（与升级期年份一致）" },
+  4: { title: "智能化期", newsNote: "2024—2026 公开报道（原始链接，摘要待人工核验）" },
+};
+
+export const newsByStage: Record<number, StageNews> = {
+  1: { id: 1, title: "萌芽期", catalog: s1Catalog, keywordMap: s1Map, verified: true },
+  2: { id: 2, title: "发展期", catalog: s2Catalog, keywordMap: s2Map, verified: true },
+  3: { id: 3, title: "升级期", catalog: s3Catalog, keywordMap: s3Map, verified: true },
+  4: { id: 4, title: "智能化期", catalog: s4Catalog, keywordMap: s4Map, verified: false },
+};
+
+/** 按时期与关键词取新闻案例 */
+export function getKeywordNews(stage: number, word: string): NewsItem[] {
+  const s = newsByStage[stage];
+  if (!s) return [];
+  return (s.keywordMap[word] || []).map((id) => s.catalog[id]).filter(Boolean);
+}
+
+/** 媒体来源排行：按当前时期关键词关联的新闻案例引用次数汇总 */
+export function getMediaRanking(stage: number) {
+  const s = newsByStage[stage];
+  if (!s) return [];
+  const counts = new Map<string, { source: string; count: number; keywords: Set<string> }>();
+  Object.entries(s.keywordMap).forEach(([word, ids]) =>
+    ids.forEach((id) => {
+      const item = s.catalog[id];
+      if (!item) return;
+      const row = counts.get(item.source) || { source: item.source, count: 0, keywords: new Set<string>() };
+      row.count++;
+      row.keywords.add(word);
+      counts.set(item.source, row);
+    }),
+  );
+  const total = [...counts.values()].reduce((sum, row) => sum + row.count, 0);
+  return [...counts.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8)
+    .map((row) => ({ ...row, keywords: [...row.keywords], share: total ? row.count / total : 0 }));
+}
+

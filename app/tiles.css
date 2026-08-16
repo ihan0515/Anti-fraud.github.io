@@ -1,0 +1,19 @@
+.cloud-node {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .18s, filter .18s, transform .18s;
+}
+.cloud-tile { stroke-width: 1.4; transition: fill .18s, stroke .18s; }
+.cloud-node.high .cloud-tile { fill:#3b1d1c; fill-opacity:.82; stroke:#a94440; }
+.cloud-node.medium .cloud-tile { fill:#352817; fill-opacity:.84; stroke:#9f6b26; }
+.cloud-node.low .cloud-tile { fill:#1c2f1d; fill-opacity:.84; stroke:#507e3b; }
+.cloud-node.high .cloud-word,.cloud-node.high .tile-index { fill:var(--red); }
+.cloud-node.medium .cloud-word,.cloud-node.medium .tile-index { fill:var(--orange); }
+.cloud-node.low .cloud-word,.cloud-node.low .tile-index { fill:var(--green); }
+.cloud-node .cloud-word { font-weight:760; transition:none; }
+.cloud-node .cloud-word:hover { transform:none; filter:none; }
+.tile-index { font:600 9px ui-monospace,monospace; opacity:.62; letter-spacing:.04em; }
+.cloud-node:hover { filter:url(#softGlow); transform:none; }
+.cloud-node:hover .cloud-tile { stroke-width:2.4; fill-opacity:1; }
+.cloud-stage svg:has(.cloud-node:hover) .cloud-node:not(:hover) { opacity:.2; }

@@ -1,0 +1,17 @@
+# dependencies
+node_modules
+.next
+out
+
+# misc
+.DS_Store
+Thumbs.db
+*.local
+.env*
+!.env.example
+
+# logs
+npm-debug.log*
+
+# local test artifacts
+_screenshots/

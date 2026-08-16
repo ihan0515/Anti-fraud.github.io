@@ -1,0 +1,151 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import clouds from "./wordclouds.json";
+import {extraWords} from "./extra-words";
+import {getMediaRanking} from "./news";
+
+type Word = (typeof clouds)[number]["words"][number];
+type Box = Word & { x:number; y:number; width:number; height:number; size:number };
+
+const riskLabel:Record<string,string>={high:"高危",medium:"中危",low:"低危"};
+// GitHub Pages 子路径前缀（由构建环境注入，本地为空）
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const evolution=[
+  {
+    thesis:"萌芽期：机构身份包装下的单点式话术雏形",
+    text:"萌芽期（2017—2019）的电信网络诈骗在作案手段与组织形态上均呈现发展初期的典型特征。互联网金融快速扩张，“现金贷”等无场景信贷野蛮生长，公民个人信息经地下产业链被批量买卖，为针对性欺骗提供了数据基础。案件多集中于贷款代办、收藏品拍卖等相对独立的交易情境，行为人伪装为信贷公司职员、拍卖行业务员或银行客户经理等机构身份，借助伪造的合同、证件与营业执照，以看似规范的业务流程消解疑虑，再以低息放款、藏品高价拍出等利益承诺诱导受害人交付费用。此阶段信任建构主要依托机构可信度与利益诱因，焦虑施压等情绪操控手段运用有限，话术尚未形成分工精细、剧本化的犯罪作业体系。",
+    evidence:"数据对应：代表词“客户”（权重50.64）、“公司”（27.23）、“贷款”（24.05）位居前列；据同期反诈部门披露，2017年前后电话、短信为主要实施渠道，占比约六至七成，QQ、微信多用于后续联系与信任维护。",
+    transition:"萌芽期 → 发展期：作案场景由单点交易（贷款代办、收藏品拍卖）转向平台化、关系化融合（婚恋交友、股票荐股与虚假投资），信任建构由机构背书转向“老师”“好友”“成功人士”等关系化人设。"
+  },
+  {
+    thesis:"发展期：“杀猪盘”与平台化转型，强信任、弱焦虑的双通道格局",
+    text:"发展期（2020—2021）是电诈从单点作案向平台化、产业化跃迁的过渡阶段。疫情防控推动线上社交、线上理财需求集中释放，缅北境外园区话术逐步走向标准化、剧本化；“断卡行动”启动后，作案主阵地从传统通讯渠道转向互联网平台，资金流转转向第三方支付与虚假平台账户。“杀猪盘”类模式成为主流，形成“情感铺垫—信任建立—诱导投资—集中收割”的完整闭环。信任建构不再仅依托利益承诺与机构背书，而是嵌入长期关系培养，再以“内幕消息”“稳赚不赔”“专属渠道”等说辞绑定利益信任；焦虑施压仅在提现受阻环节少量出现，整体呈“强信任、弱焦虑”的双通道特征。",
+    evidence:"数据对应：代表词“投资”（权重42.20）、“股票”（26.41）、“平台”（20.79）居前；“微信”“好友”“老师”“恋爱”等关系化词汇密集，反映载体由电话短信转向即时通讯、伪装由机构身份转向关系化人设。",
+    transition:"发展期 → 升级期：伪装策略由“关系信任”让位于“专业包装”，心理操控由“强信任、弱焦虑”转向信任与焦虑“双通道耦合施压”，核心驱动力从情感认同与利益诱惑的叠加，转向利益诱惑与操作控制的捆绑。"
+  },
+  {
+    thesis:"升级期：虚拟资产化与操作控制化，“包装取信＋操作控制”的复合话术",
+    text:"升级期（2022—2023）是电诈从平台化经营向虚拟资产化、操作控制化跃迁的关键阶段。《反电信网络诈骗法》施行，“断卡”“断流”“拔钉”等专项行动与缅北专项打击形成治理高压；央行严控虚拟货币交易后，USDT等稳定币与黄金成为资金转移新通道。话术主动“蹭热点包装”，把虚拟币、黄金、直播投资包装成“稳赚不赔”的稀缺机会；非法投资APP、直播间、数字钱包与指定账户配合，绕开应用市场审核、银行账户监管与第三方支付风控，实现“引流—投资—转账—洗钱”全流程闭环。信任建构通过“承诺高回报—小额返利—平台背书”快速完成，焦虑施压前置为全程核心驱动力，“指定账户”“账户冻结”“无法提现”“缴纳解冻金”等话术持续施压，迫使受害人不断追加投入。",
+    evidence:"数据对应：代表词“投资”（权重57.73）、“平台”（36.19）、“转账”（25.86）、“账户”（23.49）居前；词云量化指标中“信任”“承诺”居于高位，与“包装取信＋操作控制”特征吻合。",
+    transition:"升级期 → 智能化期：操控手段由“操作控制”叠加“技术证据”，AI换脸、AI语音与深度伪造让伪装从“口头宣称”质变为视频、图像、声音的全套技术证据，信任建构趋于“即时化”。"
+  },
+  {
+    thesis:"智能化期：技术证据伪装、即时信任与精准焦虑施压的复合操控",
+    text:"智能化期（2024—2026）的电诈在技术形态与心理操控上呈现前所未有的质变。AI生成、AI换脸、深度伪造等技术门槛大幅降低，犯罪行为智能化成本显著下降；《反电信网络诈骗法》施行后国内打击力度持续加大，诈骗团伙加速向境外转移，此前各时期积累的海量个人信息泄露数据被AI激活为精准诈骗资源。诈骗场景边界消失——社交平台、短视频、直播、投资APP、视频通话均可成为诈骗场域；伪装完成从“口头宣称”到“技术证据”的质变，AI合成的视频、盈利截图使信任可在第一次接触时即基本完成，焦虑施压上升至“涉嫌犯罪”“账户异常”等身份层面威胁，形成“技术证据伪装、即时信任建构、精准焦虑施压”于一体的复合话术体系。",
+    evidence:"数据对应：代表词“AI”（权重31.31）、“网络”（28.16）、“资金”（29.27）、“视频”（24.70）居前；“AI换脸”“伪造”“精准”等词反映技术证据伪装与精准施压成为核心手段。",
+    transition:"四时期总体演化：话术由单点费用诱骗 → 关系信任 → 包装控制 → 技术证据递进，心理操控从“利益诱惑”单一驱动演化为“利益＋焦虑＋权威”复合驱动，标志着电诈进入技术驱动的精准操控时代。"
+  }
+];
+
+function layoutWords(words:Word[]):Box[]{
+  const placed:Box[]=[];
+  const sorted=[...words].sort((a,b)=>b.weight-a.weight);
+  const scale=words.length<=25?1.02:words.length<=27?.96:.88;
+  for(const word of sorted){
+    // The visual risk class is derived exclusively from the same emotion-
+    // weighted value shown in the tooltip and legend. Never reuse a legacy
+    // classification from the source table here.
+    const risk:Word["risk"]=word.weight>=20?"high":word.weight>=10?"medium":"low";
+    const size=Math.min(word.fontSize,62)*scale;
+    // Reserve a little more room than the visible glyphs need. This keeps
+    // heavier system fonts and different browser font rendering from letting
+    // text escape its tile and touch a neighbour.
+    const width=Math.max(size*1.72,word.word.length*size*1.1)+28;
+    const height=size*1.38+24;
+    let chosen:{x:number;y:number}|null=null;
+    const isFree=(x:number,y:number)=>x>=28&&x+width<=972&&y>=28&&y+height<=492&&!placed.some(p=>x<p.x+p.width+20&&x+width+20>p.x&&y<p.y+p.height+16&&y+height+16>p.y);
+    // Wide elliptical spiral: use the full panel instead of clustering at center.
+    for(let i=0;i<5200;i++){
+      const angle=i*.44+(word.rank%5)*.18;
+      const radius=7.1*Math.sqrt(i);
+      const x=500+radius*Math.cos(angle)-width/2;
+      const y=260+radius*.54*Math.sin(angle)-height/2;
+      if(isFree(x,y)){chosen={x,y};break}
+    }
+    // Deterministic full-canvas fallback; never stack failed words at center.
+    if(!chosen){
+      outer:for(let y=34;y<=480-height;y+=12){
+        for(let x=34;x<=966-width;x+=12){if(isFree(x,y)){chosen={x,y};break outer}}
+      }
+    }
+    if(chosen) placed.push({...word,risk,...chosen,width,height,size});
+  }
+  return placed;
+}
+
+export default function WordCloudStudio(){
+  const [stage,setStage]=useState(1);
+  const [hovered,setHovered]=useState<Word|null>(null);
+  useEffect(()=>{const n=Number(new URLSearchParams(location.search).get("stage"));if(n>=1&&n<=4)setStage(n)},[]);
+  const cloud=clouds.find(c=>c.id===stage)!;
+  const story=evolution[stage-1];
+  const mediaRanking=useMemo(()=>getMediaRanking(stage),[stage]);
+  const periodWords=useMemo(()=>{
+    // Original metrics win whenever an added display word happens to repeat
+    // one already selected for the period. Unique keys also prevent React
+    // from reusing two SVG nodes for the same word during stage switching.
+    //
+    // 「收益」为各期数据集中保留的通用展示词，暂无对应专题新闻映射，
+    // 为避免点击后进入空专题页，此处统一从词云中过滤（数据本身保留）。
+    const unique=new Map<string,Word>();
+    cloud.words.filter(word=>word.word!=="收益").forEach(word=>unique.set(word.word,word));
+    extraWords.filter(word=>word.stage===stage).forEach(({stage:_,...word})=>{
+      if(word.word!=="收益"&&!unique.has(word.word)) unique.set(word.word,word as Word);
+    });
+    return [...unique.values()];
+  },[cloud,stage]);
+  const words=useMemo(()=>layoutWords(periodWords),[periodWords]);
+  const change=(id:number)=>{setStage(id);setHovered(null);history.replaceState(null,"",`?stage=${id}`)};
+  return <main className="site-shell">
+    <div className="grid-glow" />
+    <header className="topbar">
+      <div className="brand"><span className="brand-mark">反诈</span><div><b>电诈话术风险图谱</b><small>2017—2026 量化研究</small></div></div>
+      <div className="top-hint"><span className="pulse"/>点击词语，进入新闻与情感分析</div>
+    </header>
+    <section className="hero">
+      <div><p className="eyebrow">TELECOM FRAUD DISCOURSE EVOLUTION</p><h1>四时期电诈话术<br/><em>情感加权词云</em></h1></div>
+      <p className="intro">字号由原情感加权权重决定，颜色反映风险等级。选择时期，观察诈骗话术从传统接触向平台化、虚拟资产化与智能化演变。</p>
+    </section>
+    <nav className="stage-tabs" aria-label="诈骗话术时期">
+      {clouds.map(c=><button key={c.id} className={stage===c.id?"active":""} onClick={()=>change(c.id)}><span>0{c.id}</span><b>{c.title}</b><small>{c.period}</small></button>)}
+    </nav>
+    <section className="cloud-card">
+      <div className="card-heading"><div><span className="stage-number">0{cloud.id}</span><div><h2>{cloud.title}话术云</h2><p>{cloud.summary}</p></div></div><div className="live-tag"><i/>数据已量化</div></div>
+      <div className="cloud-stage">
+        <svg viewBox="0 0 1000 520" role="img" aria-label={`${cloud.title}电诈话术风险词云`}>
+          <defs><filter id="softGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          {words.map(w=><a key={w.word} href={`${basePath}/keyword?stage=${stage}&word=${encodeURIComponent(w.word)}`} aria-label={`${w.word}，${riskLabel[w.risk]}，权重${w.weight}`} onMouseEnter={()=>setHovered(w)} onMouseLeave={()=>setHovered(null)}>
+            <g className={`cloud-node ${w.risk}`}>
+              <rect className="cloud-tile" x={w.x} y={w.y} width={w.width} height={w.height} rx="7" />
+              <text className="tile-index" x={w.x+8} y={w.y+13}>#{String(w.rank).padStart(2,"0")}</text>
+              <text x={w.x+w.width/2} y={w.y+w.height*.72} textAnchor="middle" className="cloud-word" style={{fontSize:w.size}}>{w.word}</text>
+            </g>
+          </a>)}
+        </svg>
+        <div className={`metric-float ${hovered?"show":""}`}>
+          {hovered&&<><div><strong>{hovered.word}</strong><span className={hovered.risk}>{riskLabel[hovered.risk]}</span></div><dl><dt>情感加权权重</dt><dd>{hovered.weight}</dd><dt>情感强度</dt><dd>{hovered.emotionStrength}</dd><dt>焦虑 / 信任</dt><dd>{hovered.anxiety} / {hovered.trust}</dd><dt>每万词频</dt><dd>{hovered.frequency}</dd></dl><p>点击查看该词相关新闻及情感分布 →</p></>}
+        </div>
+      </div>
+      <footer className="card-footer"><div className="legend"><span><i className="high"/>高危 ≥20</span><span><i className="medium"/>中危 10—20</span><span><i className="low"/>低危 ＜10</span></div><p>字号＝原情感加权权重 · 期内对数缩放</p></footer>
+    </section>
+    <section className="evolution-section" aria-labelledby="evolution-title">
+      <div className="evolution-kicker"><span>EVOLUTION / 0{stage}</span><i /></div>
+      <div className="evolution-copy"><p>阶段演化解读</p><h2 id="evolution-title">{story.thesis}</h2><div className="story-columns"><p>{story.text}</p><aside><b>数据对应</b><span>{story.evidence}</span></aside></div></div>
+      <div className="transition-line"><span>{stage<4?`0${stage}`:"总"}</span><p>{story.transition}</p><b>{stage<4?`0${stage+1}`:"结论"}</b></div>
+      <div className="evolution-rail" aria-label="四时期演化进度">{clouds.map(c=><button key={c.id} className={stage===c.id?"active":""} onClick={()=>change(c.id)}><i/><span>{c.title}</span></button>)}</div>
+    </section>
+    <section className="media-ranking" aria-labelledby="media-ranking-title">
+      <header><div><p>MEDIA SOURCE RANKING / 0{stage}</p><h2 id="media-ranking-title">{cloud.title}关键词相关新闻媒体来源排行</h2></div><span>{cloud.period} · {mediaRanking.length?"已接入":"数据待录入"}</span></header>
+      <div className="ranking-table-wrap"><table><thead><tr><th>排名</th><th>媒体来源</th><th>新闻引用</th><th>关联关键词</th><th>来源占比</th><th>状态</th></tr></thead><tbody>
+        {mediaRanking.length?mediaRanking.map((row,i)=><tr key={row.source}><td><b>{String(i+1).padStart(2,"0")}</b></td><td><strong className="source-name">{row.source}</strong></td><td>{row.count}</td><td><span className="keyword-chips">{row.keywords.slice(0,5).join("、")}{row.keywords.length>5?"…":""}</span></td><td><div className="share-value"><div className="share-placeholder"><i style={{width:`${Math.max(8,row.share*100)}%`}}/></div><span>{(row.share*100).toFixed(1)}%</span></div></td><td><span className="verified-cell">{stage===4?"待核验":"已接入"}</span></td></tr>):Array.from({length:8},(_,i)=><tr key={i}><td><b>{String(i+1).padStart(2,"0")}</b></td><td><span className="empty-cell">待填入媒体名称</span></td><td>—</td><td><span className="empty-cell">待填入关键词</span></td><td><div className="share-placeholder"><i style={{width:`${88-i*8}%`}}/></div></td><td><span className="empty-cell">待补充</span></td></tr>)}
+      </tbody></table></div>
+      <footer><p>{mediaRanking.length?`统计口径：按${cloud.title}词云关键词关联的新闻案例引用次数汇总；同一新闻对应多个关键词时分别计入。${stage===2?"（发展期关键词的案例报道发布于 2022—2023 年，案件行为对应 2020—2021 年话术特征。）":""}`:"建议统计口径：按当前时期所选关键词检索相关新闻，统一媒体名称后汇总篇数并计算来源占比。"}</p><span>{mediaRanking.length?(stage===4?"2024—2026 原始链接已接入 · 待核验":"新闻案例已接入"):"数据待录入"}</span></footer>
+    </section>
+  </main>
+}
+
+
+
+
+

@@ -1,0 +1,22 @@
+export const extraWords = [
+  {stage:1,word:"平台",weight:6.5988,risk:"low",emotionStrength:9.5516,anxiety:0,trust:9.5516,frequency:35.6633,coverage:.1304,rank:39,href:"",fontSize:25.9},
+  {stage:1,word:"网络",weight:6.7934,risk:"low",emotionStrength:27.0505,anxiety:0,trust:27.0505,frequency:28.5307,coverage:.087,rank:66,href:"",fontSize:26.3},
+  {stage:1,word:"验证",weight:5.6263,risk:"low",emotionStrength:28.1782,anxiety:0,trust:28.1782,frequency:21.398,coverage:.087,rank:91,href:"",fontSize:23.3},
+  {stage:1,word:"资金",weight:4.7115,risk:"low",emotionStrength:11.0068,anxiety:0,trust:11.0068,frequency:21.398,coverage:.1304,rank:92,href:"",fontSize:20.5},
+  {stage:1,word:"网站",weight:8.0337,risk:"low",emotionStrength:9.204,anxiety:0,trust:9.204,frequency:42.796,coverage:.2174,rank:32,href:"",fontSize:29.1},
+  {stage:2,word:"下载",weight:14.4038,risk:"medium",emotionStrength:3.2732,anxiety:.1602,trust:3.2732,frequency:54.7445,coverage:.0943,rank:15,href:"",fontSize:37.3},
+  {stage:2,word:"聊天",weight:14.7107,risk:"medium",emotionStrength:8.6796,anxiety:.1602,trust:8.6796,frequency:50.1825,coverage:.0943,rank:17,href:"",fontSize:37.7},
+  {stage:2,word:"虚假",weight:10.9723,risk:"medium",emotionStrength:6.8976,anxiety:.2747,trust:6.8976,frequency:36.4964,coverage:.0472,rank:32,href:"",fontSize:31.2},
+  {stage:2,word:"添加",weight:15.8565,risk:"medium",emotionStrength:9.0548,anxiety:.853,trust:9.0548,frequency:54.7445,coverage:.1038,rank:14,href:"",fontSize:38.9},
+  {stage:2,word:"炒股",weight:8.5373,risk:"low",emotionStrength:3.6631,anxiety:.2747,trust:3.6631,frequency:27.3723,coverage:.0472,rank:62,href:"",fontSize:25.8},
+  {stage:3,word:"团伙",weight:26.7442,risk:"high",emotionStrength:15.2461,anxiety:4.8004,trust:15.2461,frequency:87.5274,coverage:.35,rank:3,href:"",fontSize:45.9},
+  {stage:3,word:"诈骗",weight:27.0404,risk:"high",emotionStrength:13.3624,anxiety:4.3203,trust:13.3624,frequency:87.5274,coverage:.4,rank:4,href:"",fontSize:46.1},
+  {stage:3,word:"充值",weight:15.3694,risk:"medium",emotionStrength:10.5395,anxiety:1.4219,trust:10.5395,frequency:54.7046,coverage:.15,rank:13,href:"",fontSize:34.5},
+  {stage:3,word:"下载",weight:19.7058,risk:"medium",emotionStrength:10.4198,anxiety:.8887,trust:10.4198,frequency:65.6455,coverage:.3,rank:10,href:"",fontSize:39.6},
+  {stage:3,word:"诱导",weight:23.6284,risk:"high",emotionStrength:15.8008,anxiety:.8887,trust:15.8008,frequency:76.5864,coverage:.3,rank:8,href:"",fontSize:43.3},
+  {stage:4,word:"诈骗",weight:44.5615,risk:"high",emotionStrength:10.2309,anxiety:3.5287,trust:10.2309,frequency:99.4425,coverage:.269,rank:1,href:"",fontSize:62},
+  {stage:4,word:"投资",weight:42.2582,risk:"high",emotionStrength:8.6842,anxiety:5.4912,trust:8.6842,frequency:96.4291,coverage:.2573,rank:2,href:"",fontSize:60.5},
+  {stage:4,word:"犯罪",weight:39.545,risk:"high",emotionStrength:21.6629,anxiety:1.4685,trust:21.6629,frequency:73.8285,coverage:.193,rank:3,href:"",fontSize:58.8},
+  {stage:4,word:"收益",weight:15.9034,risk:"medium",emotionStrength:12.6109,anxiety:5.8303,trust:12.6109,frequency:27.1207,coverage:.0877,rank:27,href:"",fontSize:36.8},
+  {stage:4,word:"惩戒",weight:19.1961,risk:"medium",emotionStrength:16.7099,anxiety:0,trust:16.7099,frequency:34.6542,coverage:.0468,rank:17,href:"",fontSize:42.7}
+] as const;

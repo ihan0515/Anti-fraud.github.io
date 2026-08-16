@@ -96,15 +96,30 @@ export default function WordCloudStudio(){
     return [...unique.values()];
   },[cloud,stage]);
   const words=useMemo(()=>layoutWords(periodWords),[periodWords]);
+  const tierShare=useMemo(()=>{
+    const tierOf=(w:Word)=>w.weight>=20?"high":w.weight>=10?"medium":"low";
+    const tiers=[
+      {key:"high",name:"高危",def:"≥20",color:"#c92f38"},
+      {key:"medium",name:"中危",def:"10—20",color:"#d9a90f"},
+      {key:"low",name:"低危",def:"＜10",color:"#3f794b"}
+    ] as const;
+    const total=periodWords.reduce((s,w)=>s+w.weight,0)||1;
+    return tiers.map(t=>{
+      const ws=periodWords.filter(w=>tierOf(w)===t.key);
+      const weight=ws.reduce((s,w)=>s+w.weight,0);
+      return {...t,count:ws.length,weight,share:weight/total};
+    });
+  },[periodWords]);
+
   const change=(id:number)=>{setStage(id);setHovered(null);history.replaceState(null,"",`?stage=${id}`)};
   return <main className="site-shell">
     <div className="grid-glow" />
     <header className="topbar">
-      <div className="brand"><span className="brand-mark">反诈</span><div><b>电诈话术风险图谱</b><small>2017—2026 量化研究</small></div></div>
+      <div className="brand"><span className="brand-mark">反诈</span><div><b>电诈话术文本演化规律研究与防诈平台</b><small>2017—2026 量化研究</small></div></div>
       <div className="top-hint"><span className="pulse"/>点击词语，进入新闻与情感分析</div>
     </header>
     <section className="hero">
-      <div><p className="eyebrow">TELECOM FRAUD DISCOURSE EVOLUTION</p><h1>四时期电诈话术<br/><em>情感加权词云</em></h1></div>
+      <div><p className="eyebrow">TELECOM FRAUD DISCOURSE EVOLUTION</p><h1>电诈话术文本演化规律研究<br/><em>与防诈平台</em></h1></div>
       <p className="intro">字号由原情感加权权重决定，颜色反映风险等级。选择时期，观察诈骗话术从传统接触向平台化、虚拟资产化与智能化演变。</p>
     </section>
     <nav className="stage-tabs" aria-label="诈骗话术时期">
@@ -128,6 +143,27 @@ export default function WordCloudStudio(){
         </div>
       </div>
       <footer className="card-footer"><div className="legend"><span><i className="high"/>高危 ≥20</span><span><i className="medium"/>中危 10—20</span><span><i className="low"/>低危 ＜10</span></div><p>字号＝原情感加权权重 · 期内对数缩放</p></footer>
+    </section>
+    <section className="tier-bar-section" aria-labelledby="tier-bar-title">
+      <header><div><p>RISK TIER SHARE / 0{stage}</p><h2 id="tier-bar-title">{cloud.title}关键词风险层级占比</h2></div><span>{cloud.period} · 按情感加权权重合计</span></header>
+      <div className="tier-bar-body">
+        <div className="tier-stack" role="img" aria-label={`${cloud.title}高危、中危、低危关键词情感加权权重占比条形图`}>
+          {tierShare.filter(t=>t.share>0).map(t=><div key={t.key} className={`tier-seg ${t.key}`} style={{width:`${Math.max(t.share*100,3)}%`,background:t.color}}>
+            <b>{t.name}</b><em>{t.share>=0.07?`${(t.share*100).toFixed(1)}%`:""}</em>
+          </div>)}
+        </div>
+        <div className="tier-legend">
+          {tierShare.map(t=><div className="tier-card" key={t.key}>
+            <div className="tier-card-head"><i style={{background:t.color}}/><b>{t.name}</b><span>{t.def}</span></div>
+            <dl>
+              <div><dt>关键词数</dt><dd>{t.count}</dd></div>
+              <div><dt>权重合计</dt><dd>{t.weight.toFixed(1)}</dd></div>
+              <div><dt>占比</dt><dd>{(t.share*100).toFixed(1)}%</dd></div>
+            </dl>
+          </div>)}
+        </div>
+      </div>
+      <footer><p>层级划分与词云图例一致：高危≥20、中危10—20、低危＜10（依据情感加权权重）；条形占比按各层级关键词情感加权权重合计计算。</p><span>{periodWords.length} 个关键词 · 总权重 {periodWords.reduce((s,w)=>s+w.weight,0).toFixed(1)}</span></footer>
     </section>
     <section className="evolution-section" aria-labelledby="evolution-title">
       <div className="evolution-kicker"><span>EVOLUTION / 0{stage}</span><i /></div>

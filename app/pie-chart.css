@@ -1,0 +1,306 @@
+/* ============ 情感加权占比可视化（饼状图 / 红黄绿占比条形图） ============ */
+.weight-pie-section,
+.tier-bar-section {
+  position: relative;
+  z-index: 1;
+  max-width: 1220px;
+  margin: 28px auto 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+/* —— 统一页头 —— */
+.weight-pie-section > header,
+.tier-bar-section > header {
+  min-height: 100px;
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  background: #0b2d4a;
+}
+.weight-pie-section header p,
+.tier-bar-section header p {
+  margin: 0 0 8px;
+  color: #9cc6e5;
+  font: 700 10px ui-monospace, monospace;
+  letter-spacing: 0.18em;
+}
+.weight-pie-section header h2,
+.tier-bar-section header h2 {
+  margin: 0;
+  font-size: 23px;
+  color: #fff;
+}
+.weight-pie-section header > span,
+.tier-bar-section header > span {
+  color: #d2dce4;
+  font-size: 12px;
+  border: 1px solid #638098;
+  background: #153e5f;
+  padding: 8px 11px;
+  white-space: nowrap;
+}
+
+/* —— 关键词饼状图主体 —— */
+.weight-pie-body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 40px;
+  padding: 30px;
+  align-items: center;
+  background: #fff;
+}
+.donut-wrap {
+  display: grid;
+  place-items: center;
+}
+.donut-svg {
+  display: block;
+}
+.donut-center text {
+  fill: var(--text);
+  text-anchor: middle;
+}
+.donut-top {
+  font-size: 12px;
+  fill: var(--muted) !important;
+  letter-spacing: 0.08em;
+}
+.donut-main {
+  font-size: 27px;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  fill: #143b5d !important;
+}
+.donut-sub {
+  font-size: 11px;
+  fill: var(--muted) !important;
+}
+
+.weight-legend {
+  display: grid;
+  gap: 8px;
+}
+.weight-legend-head,
+.weight-row {
+  display: grid;
+  grid-template-columns: 14px 84px 1fr 76px 62px;
+  align-items: center;
+  gap: 10px;
+}
+.weight-legend-head {
+  color: #8294a3;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #d4dde5;
+}
+.weight-legend-head span:last-child,
+.weight-row b {
+  text-align: right;
+}
+.weight-row {
+  min-height: 40px;
+  border-bottom: 1px solid #edf1f4;
+}
+.weight-row:last-child {
+  border-bottom: 0;
+}
+.weight-row i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: block;
+}
+.wl-name {
+  font-weight: 700;
+  color: #143b5d;
+  font-size: 13px;
+}
+.wl-raw,
+.wl-norm {
+  color: #5b7286;
+  font: 600 12px ui-monospace, monospace;
+  text-align: right;
+}
+.weight-row b {
+  color: #b32632;
+  font: 700 13px ui-monospace, monospace;
+}
+
+/* —— 红黄绿占比条形图主体 —— */
+.tier-bar-body {
+  padding: 30px;
+  display: grid;
+  gap: 24px;
+  background: #fff;
+}
+.tier-stack {
+  display: flex;
+  height: 76px;
+  border: 1px solid #c8d2dc;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e9eff4;
+}
+.tier-seg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 30px;
+  transition: filter 0.2s;
+}
+.tier-seg:hover {
+  filter: brightness(1.06);
+}
+.tier-seg b {
+  font-size: 13px;
+  color: #fff;
+  letter-spacing: 0.06em;
+}
+.tier-seg em {
+  font-style: normal;
+  font: 700 12px ui-monospace, monospace;
+  color: #fff;
+}
+.tier-seg.medium b,
+.tier-seg.medium em {
+  color: #3d2f00;
+}
+.tier-legend {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.tier-card {
+  border: 1px solid #d5dee6;
+  background: #f8fafb;
+  padding: 14px 16px;
+}
+.tier-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tier-card-head i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: block;
+}
+.tier-card-head b {
+  color: #143b5d;
+  font-size: 14px;
+}
+.tier-card-head span {
+  color: #8294a3;
+  font-size: 11px;
+  margin-left: auto;
+  font-family: ui-monospace, monospace;
+}
+.tier-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0 0;
+}
+.tier-card dl div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tier-card dt {
+  color: #8294a3;
+  font-size: 10px;
+}
+.tier-card dd {
+  margin: 0;
+  color: #143b5d;
+  font: 700 13px ui-monospace, monospace;
+}
+
+/* —— 统一页脚 —— */
+.weight-pie-section > footer,
+.tier-bar-section > footer {
+  min-height: 62px;
+  padding: 14px 30px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: #66798b;
+  font-size: 11px;
+  background: #f8fafb;
+}
+.weight-pie-section footer p,
+.tier-bar-section footer p {
+  margin: 0;
+  line-height: 1.7;
+}
+.weight-pie-section footer span,
+.tier-bar-section footer span {
+  white-space: nowrap;
+  color: #b72c34;
+}
+
+@media (max-width: 800px) {
+  .weight-pie-section,
+  .tier-bar-section {
+    margin: 20px 12px 0;
+  }
+  .weight-pie-section > header,
+  .tier-bar-section > header {
+    padding: 20px;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .weight-pie-section header > span,
+  .tier-bar-section header > span {
+    display: none;
+  }
+  .weight-pie-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 22px;
+    justify-items: center;
+  }
+  .weight-legend {
+    width: 100%;
+  }
+  .weight-legend-head,
+  .weight-row {
+    grid-template-columns: 14px 1fr 64px 56px;
+  }
+  .weight-legend-head span:nth-child(4),
+  .weight-row .wl-norm {
+    display: none;
+  }
+  .tier-bar-body {
+    padding: 22px;
+  }
+  .tier-stack {
+    height: 64px;
+  }
+  .tier-seg b {
+    font-size: 12px;
+  }
+  .tier-legend {
+    grid-template-columns: 1fr;
+  }
+  .weight-pie-section > footer,
+  .tier-bar-section > footer {
+    padding: 14px 20px;
+    display: block;
+  }
+  .weight-pie-section footer span,
+  .tier-bar-section footer span {
+    display: block;
+    margin-top: 8px;
+  }
+}

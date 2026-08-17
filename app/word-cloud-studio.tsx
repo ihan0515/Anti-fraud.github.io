@@ -38,6 +38,79 @@ const evolution=[
   }
 ];
 
+// ===== 反诈便民工具箱（四时期通用渠道 + 各时期差异化诈骗类型速查表）=====
+const toolkitChannels={
+  phone:{name:"全国反诈中心专线",value:"96110",desc:"公安部统一的反诈预警劝阻咨询专线，接到来电务必接听；发现被骗或疑似诈骗可拨打咨询、举报。"},
+  app:{name:"国家反诈中心APP",desc:"公安部刑侦局官方出品，可举报涉诈线索、预警诈骗来电短信、学习反诈知识。",ios:"https://apps.apple.com/cn/app/id1552823102",android:"https://sj.qq.com/appdetail/com.hicorenational.antifraud"},
+  report:{name:"网络违法犯罪举报平台",desc:"公安部网络安全保卫局建设运维的官方网络违法犯罪举报网站；另可向12321网络不良与垃圾信息举报受理中心举报涉诈电话短信。",url:"http://www.cyberpolice.cn/",backup:"https://www.12321.cn/"}
+};
+const toolkitScams:[number,{type:string;desc:string;tip:string}[]][]=[
+  [1,[
+    {type:"贷款代办/提额诈骗",desc:"假冒信贷公司、银行职员，以“低息放款”“先交保证金、包装费、验资费”为名骗钱。",tip:"正规贷款不会要求先交任何费用；放款前要钱的都是诈骗。"},
+    {type:"收藏品拍卖诈骗",desc:"谎称藏品可高价拍卖，先收取鉴定费、手续费、保证金。",tip:"拍卖机构不会在成交前反复收费；要求先交费的“高价收购”多为骗局。"},
+    {type:"冒充公检法/银行客服",desc:"电话通知“涉嫌洗钱、账户异常”，要求将资金转入“安全账户”。",tip:"公检法、银行不会电话要求转账至“安全账户”；此类来电直接挂断。"},
+    {type:"中奖/退税诈骗",desc:"通知“中奖需先缴税、公证费”或“退税需先交手续费”。",tip:"先交钱再领奖、退税的，一律是诈骗；主动找你的“大奖”不可信。"},
+    {type:"伪基站短信钓鱼",desc:"伪基站群发“银行积分兑换、信用卡提额”短信，诱导点击钓鱼链接。",tip:"银行短信链接勿轻点；涉及账号密码、验证码的页面立即关闭。"},
+    {type:"QQ盗号冒充熟人",desc:"盗取QQ后冒充亲友“急需用钱”要求转账。",tip:"熟人线上借钱务必电话或当面二次确认，不向陌生账户直接转账。"}
+  ]],
+  [2,[
+    {type:"“杀猪盘”婚恋投资",desc:"社交平台建立恋爱关系后，诱导下载虚假平台“一起投资”并收割。",tip:"网恋对象提到投资、理财、代操作，立即终止资金往来。"},
+    {type:"虚假投资理财平台",desc:"“老师带单”、群友晒盈利，小额可提现，大额无法提现。",tip:"投资只选持牌正规机构；群内晒单、稳赚话术全是托与剧本。"},
+    {type:"刷单返利诈骗",desc:"先小额返利骗取信任，再诱导垫付大额任务后“无法提现”。",tip:"刷单本身违法且必是骗局，切勿垫付资金。"},
+    {type:"注销校园贷/征信诈骗",desc:"冒充平台客服，以“影响征信、注销校园贷账户”为由诱导借贷转账。",tip:"个人征信无法由客服私下处理；接到“影响征信”电话直接挂断。"},
+    {type:"冒充客服退款理赔",desc:"以订单异常、退款理赔为由套取验证码或诱导屏幕操作。",tip:"退款理赔只在原平台操作；客服索要验证码的必是诈骗。"},
+    {type:"虚假贷款APP",desc:"下载虚假贷款软件后以“银行卡输错、解冻费、保证金”为由骗钱。",tip:"贷款放款前先收费的都是诈骗；认准银行与持牌机构。"}
+  ]],
+  [3,[
+    {type:"虚拟货币投资诈骗",desc:"以USDT、比特币等“稳赚不赔”话术诱导进入虚假交易平台。",tip:"虚拟币交易须选持牌合规平台；任何“包赚”承诺都是骗局。"},
+    {type:"黄金/贵金属投资诈骗",desc:"直播间、分析师包装“内部行情”，诱导在虚假平台交易“伦敦金”等。",tip:"直播间荐金、荐股、喊单都是高风险信号，勿跟随转账。"},
+    {type:"直播荐股杀猪盘",desc:"“大师”直播间荐股，群友晒盈利截图，诱导下载非法炒股APP。",tip:"荐股群、直播间里的“股神”和晒单者多为托，勿入陌生群。"},
+    {type:"账户冻结/解冻金话术",desc:"以“账户被冻结、操作异常”为由，要求缴纳解冻金、保证金继续充值。",tip:"正规平台不会以解冻名义收费；要求继续充值的必是诈骗。"},
+    {type:"刷单+赌博复合诈骗",desc:"以“做任务、博彩刷单”名义诱导下注充值，先返利后收割。",tip:"网络赌博违法且不可提现；所谓“博彩刷单”是复合骗局。"},
+    {type:"冒充领导/老板诈骗",desc:"冒充公司领导、熟人添加财务或员工，要求紧急转账。",tip:"领导线上要求转账，务必当面或原号码核实，不轻信头像与昵称。"}
+  ]],
+  [4,[
+    {type:"AI换脸/AI拟声诈骗",desc:"用AI合成亲友、领导的声音与面容，以“紧急救场”等话术索要钱款。",tip:"视频、语音均可伪造；涉及钱款务必用原号码回拨或当面核实。"},
+    {type:"AI荐股/AI智能投资诈骗",desc:"包装“AI量化选股、智能理财”技术，诱导下载虚假投资APP。",tip:"凡宣称“AI稳赚、内部技术”荐股的，都是投资理财诈骗。"},
+    {type:"数字人民币/虚拟币诈骗",desc:"冒充公检法要求将资金转入“数字人民币安全账户”或兑换虚拟币。",tip:"公检法不会要求转账至任何“安全账户”，数字人民币同样可被诈骗利用。"},
+    {type:"屏幕共享诈骗",desc:"诱导开启屏幕共享/远程协助，窃取验证码与银行卡信息。",tip:"任何要求开启屏幕共享的都是诈骗，立即拒绝并挂断。"},
+    {type:"FaceTime/畅连来电诈骗",desc:"通过FaceTime等视频通话冒充客服、公安实施诈骗。",tip:"陌生FaceTime来电多为诈骗，可在设置中关闭陌生来电功能。"},
+    {type:"冒充“反诈/征信中心”诈骗",desc:"谎称“账户涉诈、征信需修复”，诱导转账或借贷。",tip:"反诈中心不会要求转账“验资”；征信修复是骗局，请走官方渠道。"}
+  ]]
+];
+
+function ToolkitSection({stage}:{stage:number}){
+  const scams=(toolkitScams.find(s=>s[0]===stage)||toolkitScams[0])[1];
+  const c=toolkitChannels;
+  return <section className="toolkit-section" aria-labelledby="toolkit-title">
+    <header><div><p>ANTI-FRAUD TOOLKIT / 0{stage}</p><h2 id="toolkit-title">反诈便民工具箱</h2></div><span>{clouds.find(x=>x.id===stage)?.period||""} · 举报渠道与速查</span></header>
+    <div className="toolkit-grid">
+      <a className="toolkit-card toolkit-phone" href="tel:96110" target="_blank" rel="noreferrer">
+        <i className="tk-ico">☎</i><div><b>{c.phone.name}</b><strong>96110</strong><p>{c.phone.desc}</p></div>
+      </a>
+      <div className="toolkit-card">
+        <i className="tk-ico">▣</i><div><b>{c.app.name}</b><p>{c.app.desc}</p><div className="tk-links">
+          <a href={c.app.ios} target="_blank" rel="noreferrer">iOS 官方下载 ↗</a>
+          <a href={c.app.android} target="_blank" rel="noreferrer">安卓官方下载 ↗</a>
+        </div></div>
+      </div>
+      <div className="toolkit-card">
+        <i className="tk-ico">◎</i><div><b>{c.report.name}</b><p>{c.report.desc}</p><div className="tk-links">
+          <a href={c.report.url} target="_blank" rel="noreferrer">公安部网络违法犯罪举报网站 ↗</a>
+          <a href={c.report.backup} target="_blank" rel="noreferrer">12321 举报受理中心（备用）↗</a>
+        </div></div>
+      </div>
+      <div className="toolkit-card toolkit-scams">
+        <i className="tk-ico">▤</i><div><b>{clouds.find(x=>x.id===stage)?.title}常见诈骗类型速查表</b><table className="scam-table">
+          <thead><tr><th>诈骗类型</th><th>话术/套路</th><th>识别要点</th></tr></thead>
+          <tbody>{scams.map(s=><tr key={s.type}><td><b>{s.type}</b></td><td>{s.desc}</td><td>{s.tip}</td></tr>)}</tbody>
+        </table></div>
+      </div>
+    </div>
+    <footer><p>渠道均为官方权威入口：96110 为公安部反诈专线；国家反诈中心APP 由公安部刑侦局开发；举报平台由公安部网安局建设运维。遇到诈骗请立即拨打 96110 或 110，并保留聊天、转账记录。</p><span>全民反诈 · 人人有责</span></footer>
+  </section>;
+}
+
 function layoutWords(words:Word[]):Box[]{
   const placed:Box[]=[];
   const sorted=[...words].sort((a,b)=>b.weight-a.weight);
@@ -127,6 +200,7 @@ export default function WordCloudStudio(){
     </nav>
     <section className="cloud-card">
       <div className="card-heading"><div><span className="stage-number">0{cloud.id}</span><div><h2>{cloud.title}话术云</h2><p>{cloud.summary}</p></div></div><div className="live-tag"><i/>数据已量化</div></div>
+      <div className="cloud-hint"><span className="cloud-hint-red">⚠ 点击词云中的词语即可查看更多防诈信息</span></div>
       <div className="cloud-stage">
         <svg viewBox="0 0 1000 520" role="img" aria-label={`${cloud.title}电诈话术风险词云`}>
           <defs><filter id="softGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
@@ -171,6 +245,7 @@ export default function WordCloudStudio(){
       <div className="transition-line"><span>{stage<4?`0${stage}`:"总"}</span><p>{story.transition}</p><b>{stage<4?`0${stage+1}`:"结论"}</b></div>
       <div className="evolution-rail" aria-label="四时期演化进度">{clouds.map(c=><button key={c.id} className={stage===c.id?"active":""} onClick={()=>change(c.id)}><i/><span>{c.title}</span></button>)}</div>
     </section>
+    <ToolkitSection stage={stage} />
     <section className="media-ranking" aria-labelledby="media-ranking-title">
       <header><div><p>MEDIA SOURCE RANKING / 0{stage}</p><h2 id="media-ranking-title">{cloud.title}关键词相关新闻媒体来源排行</h2></div><span>{cloud.period} · {mediaRanking.length?"已接入":"数据待录入"}</span></header>
       <div className="ranking-table-wrap"><table><thead><tr><th>排名</th><th>媒体来源</th><th>新闻引用</th><th>关联关键词</th><th>来源占比</th><th>状态</th></tr></thead><tbody>

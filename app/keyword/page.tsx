@@ -4,13 +4,29 @@ import {getKeywordNews,stageMeta} from "../news";
 import clouds from "../wordclouds.json";
 import {extraWords} from "../extra-words";
 import DonutChart from "../sentiment-pie";
+import {getLaw} from "../criminal-law";
 
+import type {NewsItem} from "../news-types";
 type Word = (typeof clouds)[number]["words"][number];
 const metricNames=["焦虑","信任","权威","综合风险"] as const;
 // GitHub Pages 子路径前缀（由构建环境注入，本地为空）
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const norm=(v:number)=>Math.max(0,Math.min(100,v));
+
+function LawModule({item}:{item:NewsItem}){
+  const law=getLaw(item);
+  return <aside className="law-module">
+    <header><span>CRIMINAL LAW</span><strong>该新闻涉及的法律条款与应有处罚</strong></header>
+    <p className="law-case-type">本案定性：{law.caseType}</p>
+    <div className="law-list">{law.laws.map((l,idx)=><div className="law-item" key={idx}>
+      <b>{l.article}</b>
+      <p>{l.clause}</p>
+      <em>应有处罚：{l.penalty}</em>
+    </div>)}</div>
+    <footer>{law.note}</footer>
+  </aside>;
+}
 
 export default function KeywordDetail(){
   const [word,setWord]=useState("关键词");const [stage,setStage]=useState("");
@@ -79,6 +95,7 @@ export default function KeywordDetail(){
       <h3><a href={item.url} target="_blank" rel="noreferrer">{item.title} ↗</a></h3>{item.summary!==item.title&&<p>{item.summary}</p>}
       <div className="case-metrics">{[["焦虑",item.anxiety],["信任",item.trust],["权威",item.authority],["综合风险",item.risk]].map(([name,value])=><div key={String(name)}><span>{name}<b>{value}</b></span><i><em style={{width:`${value}%`}}/></i></div>)}</div>
       <aside className="fraud-tip"><strong>防诈小贴士</strong><p>{item.tip}</p></aside>
+      <LawModule item={item} />
     </article>)}</div></section>:<section className="detail-panel empty-detail"><h2>相关新闻案例待接入</h2><p>{stageNum===4?"智能化期原始链接已接入，案情摘要与量化指标待人工核验补充。":"该时期新闻案例将在相应阶段资料核验后接入。"}</p></section>}
   </main>
 }

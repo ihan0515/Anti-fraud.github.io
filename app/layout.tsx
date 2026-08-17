@@ -6,6 +6,7 @@ import "./media-ranking.css";
 import "./pie-chart.css";
 import "./police-theme.css";
 import "./keyword-news.css";
+import "./toolkit.css";
 
 // GitHub Pages 子路径前缀（由构建环境注入，本地为空）
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";

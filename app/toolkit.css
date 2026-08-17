@@ -1,0 +1,96 @@
+/* ============ 反诈便民工具箱 / 词云提示 / 法律条款模块 ============ */
+
+/* —— 词云上方红色说明小字 —— */
+.cloud-hint{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:9px 16px;
+  background:linear-gradient(90deg,#fff5f5,#fdeaea 50%,#fff5f5);
+  border-bottom:1px solid #f2d4d5;
+}
+.cloud-hint-red{
+  color:#c92f38;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.05em;
+}
+
+/* —— 反诈便民工具箱 —— */
+.toolkit-section{
+  position:relative;z-index:1;max-width:1220px;margin:28px auto 0;
+  border:1px solid var(--line);background:#fff;box-shadow:0 14px 36px #102f4d12;
+}
+.toolkit-section>header{
+  min-height:100px;padding:24px 30px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);background:#0b2d4a;
+}
+.toolkit-section header p{margin:0 0 8px;color:#9cc6e5;font:700 10px ui-monospace,monospace;letter-spacing:.18em}
+.toolkit-section header h2{margin:0;font-size:23px;color:#fff}
+.toolkit-section header>span{color:#d2dce4;font-size:12px;border:1px solid #638098;background:#153e5f;padding:8px 11px;white-space:nowrap}
+.toolkit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:24px}
+.toolkit-card{
+  border:1px solid #d5dee6;background:#f8fafb;border-radius:8px;padding:18px 18px 16px;
+  display:flex;gap:14px;text-decoration:none;color:inherit;transition:border-color .18s,box-shadow .18s,transform .18s;
+}
+a.toolkit-card:hover{border-color:#c92f38;box-shadow:0 8px 22px #c92f3818;transform:translateY(-2px)}
+.tk-ico{
+  flex:none;width:42px;height:42px;border-radius:8px;display:grid;place-items:center;
+  font-style:normal;font-size:20px;color:#fff;background:linear-gradient(135deg,#174f7b,#2a6ea5);
+}
+.toolkit-card>div{min-width:0}
+.toolkit-card b{display:block;color:#143b5d;font-size:14px;margin-bottom:5px}
+.toolkit-card p{color:#5b7286;font-size:12px;line-height:1.7;margin:6px 0 0}
+.toolkit-phone{background:linear-gradient(180deg,#fff,#fdf1f1)}
+.toolkit-phone .tk-ico{background:linear-gradient(135deg,#c92f38,#e05a60)}
+.toolkit-phone strong{display:block;font:800 26px ui-monospace,monospace;color:#c92f38;letter-spacing:.06em}
+.tk-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tk-links a{
+  color:#174f7b;font-size:12px;font-weight:600;text-decoration:none;
+  border:1px solid #b8c7d3;background:#eef3f7;padding:5px 10px;border-radius:5px;
+}
+.tk-links a:hover{color:#c92f38;border-color:#c92f38}
+.toolkit-scams{grid-column:1/-1}
+.toolkit-scams>div{width:100%}
+.scam-table{width:100%;border-collapse:collapse;margin-top:8px;min-width:760px}
+.scam-table th{
+  text-align:left;height:40px;padding:0 14px;color:#52697d;font-size:11px;font-weight:700;letter-spacing:.05em;
+  background:#e9eff4;border-bottom:1px solid #c6d1da;
+}
+.scam-table td{height:auto;padding:11px 14px;border-bottom:1px solid #dde4ea;color:#455c70;font-size:12px;line-height:1.7;vertical-align:top}
+.scam-table tr:last-child td{border-bottom:0}
+.scam-table td b{color:#c92f38;font-size:12.5px;white-space:nowrap}
+.toolkit-section>footer{
+  min-height:62px;padding:14px 30px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;
+  color:#66798b;font-size:11px;background:#f8fafb;
+}
+.toolkit-section footer p{margin:0;line-height:1.7}
+.toolkit-section footer span{white-space:nowrap;color:#b72c34}
+
+/* —— 关键词页：法律条款与应有处罚模块 —— */
+.law-module{
+  margin-top:14px;border:1px solid #d5dee6;border-left:4px solid #c92f38;border-radius:8px;
+  background:#fdfafa;padding:14px 16px;
+}
+.law-module header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.law-module header span{color:#b32632;font:700 10px ui-monospace,monospace;letter-spacing:.16em}
+.law-module header strong{color:#143b5d;font-size:14px}
+.law-case-type{color:#7a2c31;font-size:12.5px;font-weight:700;margin:0 0 8px}
+.law-list{display:grid;gap:10px}
+.law-item{border:1px solid #ead5d6;background:#fff;border-radius:6px;padding:10px 12px}
+.law-item b{display:block;color:#143b5d;font-size:12.5px;margin-bottom:5px}
+.law-item p{color:#4c6175;font-size:12px;line-height:1.8;margin:0 0 6px}
+.law-item em{display:block;font-style:normal;color:#b32632;font-size:12px;line-height:1.7;background:#fdf2f2;border-left:3px solid #c92f38;padding:6px 10px}
+.law-module footer{color:#8294a3;font-size:11px;line-height:1.7;margin-top:10px;padding-top:8px;border-top:1px dashed #e3d9da}
+
+@media(max-width:800px){
+  .toolkit-section{margin:20px 12px 0}
+  .toolkit-section>header{padding:20px;align-items:flex-start;gap:14px}
+  .toolkit-section header>span{display:none}
+  .toolkit-grid{grid-template-columns:1fr;padding:18px}
+  .toolkit-section>footer{padding:14px 20px;display:block}
+  .toolkit-section footer span{display:block;margin-top:8px}
+  .scam-table th:nth-child(3),.scam-table td:nth-child(3){display:none}
+  .cloud-hint{padding:8px 12px}
+  .cloud-hint-red{font-size:12px}
+}

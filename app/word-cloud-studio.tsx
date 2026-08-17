@@ -188,7 +188,7 @@ export default function WordCloudStudio(){
   return <main className="site-shell">
     <div className="grid-glow" />
     <header className="topbar">
-      <div className="brand"><span className="brand-mark">反诈</span><div><b>电诈话术文本演化规律研究与防诈平台</b><small>2017—2026 量化研究</small></div></div>
+      <div className="brand"><img className="brand-logo" src={`${basePath}/logo-mark.svg`} alt="电诈话术演化 LOGO" /><div><b>电诈话术文本演化规律研究与防诈平台</b><small>2017—2026 量化研究</small></div></div>
       <div className="top-hint"><span className="pulse"/>点击词语，进入新闻与情感分析</div>
     </header>
     <section className="hero">

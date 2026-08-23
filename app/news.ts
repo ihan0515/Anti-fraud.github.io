@@ -11,13 +11,13 @@ export interface StageNews {
   title: string;
   catalog: Record<string, NewsItem>;
   keywordMap: Record<string, string[]>;
-  /** 是否已完成人工核验（stage2 为逐条手写核验；stage1/3 由素材自动构建；stage4 为原始链接，待核验） */
+  /** 是否已完成资料核验（stage2 由文档结构化生成；stage1/3 由素材构建；stage4 为原始链接，待核验） */
   verified: boolean;
 }
 
 export const stageMeta: Record<number, { title: string; newsNote: string }> = {
   1: { title: "萌芽期", newsNote: "2017—2019 官方案例链接汇编（与萌芽期年份一致）" },
-  2: { title: "发展期", newsNote: "案例报道发布于 2022—2023 年（对应发展期话术的典型案件）" },
+  2: { title: "发展期", newsNote: "2020—2021 公开案例（与发展期年份一致，共 104 条）" },
   3: { title: "升级期", newsNote: "2022—2023 公开反诈报道（与升级期年份一致）" },
   4: { title: "智能化期", newsNote: "2024—2026 公开报道（原始链接，摘要待人工核验）" },
 };
@@ -57,4 +57,3 @@ export function getMediaRanking(stage: number) {
     .slice(0, 8)
     .map((row) => ({ ...row, keywords: [...row.keywords], share: total ? row.count / total : 0 }));
 }
-

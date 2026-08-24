@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import clouds from "./wordclouds.json";
 import {extraWords} from "./extra-words";
-import {getMediaRanking} from "./news";
+import {getMediaRanking,searchNews,type NewsSearchResult} from "./news";
+import {getLaw} from "./criminal-law";
 
 type Word = (typeof clouds)[number]["words"][number];
 type Box = Word & { x:number; y:number; width:number; height:number; size:number };
@@ -147,6 +148,47 @@ function layoutWords(words:Word[]):Box[]{
   return placed;
 }
 
+function HomeSearch(){
+  const [query,setQuery]=useState("");
+  const [searched,setSearched]=useState("");
+  const [results,setResults]=useState<NewsSearchResult[]>([]);
+  const [selected,setSelected]=useState<NewsSearchResult|null>(null);
+  const close=()=>{setSearched("");setResults([]);setSelected(null)};
+  const submit=(event:React.FormEvent)=>{
+    event.preventDefault();
+    const term=query.trim();
+    if(!term)return;
+    setSearched(term);setResults(searchNews(term));setSelected(null);
+  };
+  const law=selected?getLaw(selected.item):null;
+  return <section className="home-search" aria-labelledby="home-search-title">
+    <div className="search-copy"><span>CASE INTELLIGENCE SEARCH</span><h2 id="home-search-title">搜索全时期案例与防诈信息</h2><p>输入诈骗关键词、新闻标题或媒体名称，直接查找案例分析、法律条文与防诈提示。</p></div>
+    <form className="search-form" onSubmit={submit} role="search">
+      <label htmlFor="case-search">案例关键词</label>
+      <div><input id="case-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="例如：投资、AI换脸、贷款、刷单" autoComplete="off"/><button type="submit" aria-label="搜索案例">⌕<span>搜索</span></button></div>
+    </form>
+    {searched&&<div className="search-overlay" role="dialog" aria-modal="true" aria-label="案例搜索结果" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
+      <div className="search-modal">
+        <header><div><span>SEARCH RESULTS</span><h2>“{searched}”相关案例</h2><p>共找到 {results.length} 条结果，数据来自网站四时期本地案例库。</p></div><button className="search-close" onClick={close} aria-label="关闭搜索结果">×</button></header>
+        {!results.length?<div className="search-empty"><b>暂未找到相关案例</b><p>可以尝试更短的关键词，例如“投资”“平台”“贷款”或“AI”。</p></div>:<div className="search-layout">
+          <div className="search-results" aria-label="搜索结果列表">{results.slice(0,60).map(result=><button key={`${result.stage}-${result.item.id}`} className={selected?.item.id===result.item.id&&selected.stage===result.stage?"active":""} onClick={()=>setSelected(result)}>
+            <span><b>{result.stageTitle}</b><time>{result.item.date}</time></span><strong>{result.item.title}</strong><small>{result.item.source} · {result.keywords.slice(0,4).join("、")||"案例新闻"}</small>
+          </button>)}</div>
+          <article className="search-detail">{selected&&law?<>
+            <div className="search-detail-meta"><span>{selected.stageTitle}</span><b>综合风险 {selected.item.risk}</b></div>
+            <h3>{selected.item.title}</h3><p className="search-source">{selected.item.source} · {selected.item.date}</p>
+            <section><h4>案例分析</h4><p>{selected.item.summary}</p></section>
+            <div className="search-metrics">{[["焦虑",selected.item.anxiety],["信任",selected.item.trust],["权威",selected.item.authority],["风险",selected.item.risk]].map(([name,value])=><div key={String(name)}><span>{name}<b>{value}</b></span><i><em style={{width:`${value}%`}}/></i></div>)}</div>
+            <aside className="search-tip"><b>防诈小贴士</b><p>{selected.item.tip}</p></aside>
+            <section className="search-law"><h4>法律条文与应有处罚</h4><p className="search-case-type">本案定性：{law.caseType}</p>{law.laws.map((item,index)=><div key={index}><b>{item.article}</b><p>{item.clause}</p><em>应有处罚：{item.penalty}</em></div>)}<small>{law.note}</small></section>
+            <a className="search-source-link" href={selected.item.url} target="_blank" rel="noreferrer">打开新闻原文 ↗</a>
+          </>:<div className="search-detail-placeholder"><b>选择一条案例查看完整分析</b><p>这里会显示案例摘要、风险指标、防诈小贴士和相关法律条文。</p></div>}</article>
+        </div>}
+      </div>
+    </div>}
+  </section>;
+}
+
 export default function WordCloudStudio(){
   const [stage,setStage]=useState(1);
   const [hovered,setHovered]=useState<Word|null>(null);
@@ -195,6 +237,7 @@ export default function WordCloudStudio(){
       <div><p className="eyebrow">TELECOM FRAUD DISCOURSE EVOLUTION</p><h1>电诈话术文本演化规律研究<br/><em>与防诈平台</em></h1></div>
       <p className="intro">字号由原情感加权权重决定，颜色反映风险等级。选择时期，观察诈骗话术从传统接触向平台化、虚拟资产化与智能化演变。</p>
     </section>
+    <HomeSearch />
     <nav className="stage-tabs" aria-label="诈骗话术时期">
       {clouds.map(c=><button key={c.id} className={stage===c.id?"active":""} onClick={()=>change(c.id)}><span>0{c.id}</span><b>{c.title}</b><small>{c.period}</small></button>)}
     </nav>
@@ -251,12 +294,14 @@ export default function WordCloudStudio(){
       <div className="ranking-table-wrap"><table><thead><tr><th>排名</th><th>媒体来源</th><th>新闻引用</th><th>关联关键词</th><th>来源占比</th><th>状态</th></tr></thead><tbody>
         {mediaRanking.length?mediaRanking.map((row,i)=><tr key={row.source}><td><b>{String(i+1).padStart(2,"0")}</b></td><td><strong className="source-name">{row.source}</strong></td><td>{row.count}</td><td><span className="keyword-chips">{row.keywords.slice(0,5).join("、")}{row.keywords.length>5?"…":""}</span></td><td><div className="share-value"><div className="share-placeholder"><i style={{width:`${Math.max(8,row.share*100)}%`}}/></div><span>{(row.share*100).toFixed(1)}%</span></div></td><td><span className="verified-cell">{stage===4?"待核验":"已接入"}</span></td></tr>):Array.from({length:8},(_,i)=><tr key={i}><td><b>{String(i+1).padStart(2,"0")}</b></td><td><span className="empty-cell">待填入媒体名称</span></td><td>—</td><td><span className="empty-cell">待填入关键词</span></td><td><div className="share-placeholder"><i style={{width:`${88-i*8}%`}}/></div></td><td><span className="empty-cell">待补充</span></td></tr>)}
       </tbody></table></div>
-      <footer><p>{mediaRanking.length?`统计口径：按${cloud.title}词云关键词关联的新闻案例引用次数汇总；同一新闻对应多个关键词时分别计入。${stage===2?"（发展期关键词的案例报道发布于 2022—2023 年，案件行为对应 2020—2021 年话术特征。）":""}`:"建议统计口径：按当前时期所选关键词检索相关新闻，统一媒体名称后汇总篇数并计算来源占比。"}</p><span>{mediaRanking.length?(stage===4?"2024—2026 原始链接已接入 · 待核验":"新闻案例已接入"):"数据待录入"}</span></footer>
+      <footer><p>{mediaRanking.length?`统计口径：按${cloud.title}词云关键词关联的新闻案例引用次数汇总；同一新闻对应多个关键词时分别计入。${stage===2?"（发展期案例报道发布于 2020—2021 年，与该时期年份一致。）":""}`:"建议统计口径：按当前时期所选关键词检索相关新闻，统一媒体名称后汇总篇数并计算来源占比。"}</p><span>{mediaRanking.length?(stage===4?"2024—2026 原始链接已接入 · 待核验":"新闻案例已接入"):"数据待录入"}</span></footer>
     </section>
+    <footer className="compliance-notice" aria-label="平台合规声明">
+      <b>合规声明</b>
+      <p>内容仅供参考，涉诈请拨 96110。</p>
+    </footer>
   </main>
 }
-
-
 
 
 

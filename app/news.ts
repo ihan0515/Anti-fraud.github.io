@@ -57,3 +57,37 @@ export function getMediaRanking(stage: number) {
     .slice(0, 8)
     .map((row) => ({ ...row, keywords: [...row.keywords], share: total ? row.count / total : 0 }));
 }
+
+export interface NewsSearchResult {
+  stage: number;
+  stageTitle: string;
+  item: NewsItem;
+  keywords: string[];
+}
+
+/** 全站静态案例搜索：完全在浏览器中运行，无需服务器。 */
+export function searchNews(query: string): NewsSearchResult[] {
+  const q = query.trim().toLocaleLowerCase("zh-CN");
+  if (!q) return [];
+  const results: Array<NewsSearchResult & { score: number }> = [];
+  Object.values(newsByStage).forEach((stage) => {
+    const keywordById = new Map<string, string[]>();
+    Object.entries(stage.keywordMap).forEach(([word, ids]) => ids.forEach((id) => {
+      const words = keywordById.get(id) || [];
+      if (!words.includes(word)) words.push(word);
+      keywordById.set(id, words);
+    }));
+    Object.values(stage.catalog).forEach((item) => {
+      const keywords = keywordById.get(item.id) || [];
+      const title = item.title.toLocaleLowerCase("zh-CN");
+      const summary = item.summary.toLocaleLowerCase("zh-CN");
+      const source = item.source.toLocaleLowerCase("zh-CN");
+      const tip = item.tip.toLocaleLowerCase("zh-CN");
+      const keywordHit = keywords.some((word) => word.toLocaleLowerCase("zh-CN").includes(q));
+      if (!title.includes(q) && !summary.includes(q) && !source.includes(q) && !tip.includes(q) && !keywordHit) return;
+      const score = (title.includes(q) ? 8 : 0) + (keywordHit ? 6 : 0) + (summary.includes(q) ? 3 : 0) + (source.includes(q) ? 2 : 0) + (tip.includes(q) ? 1 : 0);
+      results.push({ stage: stage.id, stageTitle: stage.title, item, keywords, score });
+    });
+  });
+  return results.sort((a, b) => b.score - a.score || b.item.date.localeCompare(a.item.date)).map(({ score: _score, ...result }) => result);
+}

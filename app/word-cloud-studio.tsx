@@ -162,7 +162,7 @@ function HomeSearch(){
   };
   const law=selected?getLaw(selected.item):null;
   return <section className="home-search" aria-labelledby="home-search-title">
-    <div className="search-copy"><span>CASE INTELLIGENCE SEARCH</span><h2 id="home-search-title">搜索全时期案例与防诈信息</h2><p>输入诈骗关键词、新闻标题或媒体名称，直接查找案例分析、法律条文与防诈提示。</p></div>
+    <div className="search-copy"><span>CASE INTELLIGENCE SEARCH</span><h2 id="home-search-title">全时期案例与防诈信息检索</h2><p>输入诈骗关键词、新闻标题或媒体名称，直接查找案例分析、法律条文与防诈提示。</p></div>
     <form className="search-form" onSubmit={submit} role="search">
       <label htmlFor="case-search">案例关键词</label>
       <div><input id="case-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="例如：投资、AI换脸、贷款、刷单" autoComplete="off"/><button type="submit" aria-label="搜索案例">⌕<span>搜索</span></button></div>
@@ -230,11 +230,11 @@ export default function WordCloudStudio(){
   return <main className="site-shell">
     <div className="grid-glow" />
     <header className="topbar">
-      <div className="brand"><img className="brand-logo" src={`${basePath}/logo-mark.svg`} alt="电诈话术演化 LOGO" /><div><b>电诈话术文本演化规律研究与防诈平台</b><small>2017—2026 量化研究</small></div></div>
+      <div className="brand"><img className="brand-logo" src={`${basePath}/logo-mark.svg`} alt="电诈话术演化 LOGO" /><div><b>电诈话术演化分析与反诈宣传教育</b><small>2017—2026 数据驱动研究</small></div></div>
       <div className="topbar-side"><div className="school-brand"><img src="https://yzb.ppsuc.edu.cn/z_g_r_m_g_a_d_x_y_j_s_y_g_w__files/web-logo2.png" alt="中国人民公安大学校徽" referrerPolicy="no-referrer"/><div><b>中国人民公安大学</b><small>PEOPLE'S PUBLIC SECURITY UNIVERSITY OF CHINA</small></div></div><div className="top-hint"><span className="pulse"/>点击词语，进入新闻与情感分析</div></div>
     </header>
     <section className="hero">
-      <div><p className="eyebrow">TELECOM FRAUD DISCOURSE EVOLUTION</p><h1>电诈话术文本演化规律研究<br/><em>与防诈平台</em></h1></div>
+      <div className="hero-title-lockup"><img src="https://yzb.ppsuc.edu.cn/z_g_r_m_g_a_d_x_y_j_s_y_g_w__files/web-logo2.png" alt="中国人民公安大学校徽" referrerPolicy="no-referrer"/><div><p className="eyebrow">DATA-DRIVEN TELECOM FRAUD DISCOURSE ANALYSIS</p><h1>数据驱动的电诈话术演化分析<br/><em>与反诈宣传教育平台</em></h1><p className="hero-institution">中国人民公安大学 · 反诈研究与宣传教育实践项目</p></div></div>
       <p className="intro">字号由原情感加权权重决定，颜色反映风险等级。选择时期，观察诈骗话术从传统接触向平台化、虚拟资产化与智能化演变。</p>
     </section>
     <HomeSearch />
@@ -302,5 +302,4 @@ export default function WordCloudStudio(){
     </footer>
   </main>
 }
-
 

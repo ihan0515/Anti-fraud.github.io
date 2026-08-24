@@ -12,7 +12,7 @@ import "./toolkit.css";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const metadata:Metadata={
-  title:"电诈话术文本演化规律研究与防诈平台",
+  title:"数据驱动的电诈话术演化分析与反诈宣传教育平台",
   description:"四时期电信网络诈骗话术情感加权词云与防诈研究平台",
   icons:{icon:`${basePath}/favicon.svg`}
 };

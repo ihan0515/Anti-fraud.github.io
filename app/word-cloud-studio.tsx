@@ -231,7 +231,7 @@ export default function WordCloudStudio(){
     <div className="grid-glow" />
     <header className="topbar">
       <div className="brand"><img className="brand-logo" src={`${basePath}/logo-mark.svg`} alt="电诈话术演化 LOGO" /><div><b>电诈话术文本演化规律研究与防诈平台</b><small>2017—2026 量化研究</small></div></div>
-      <div className="top-hint"><span className="pulse"/>点击词语，进入新闻与情感分析</div>
+      <div className="topbar-side"><div className="school-brand"><img src="https://yzb.ppsuc.edu.cn/z_g_r_m_g_a_d_x_y_j_s_y_g_w__files/web-logo2.png" alt="中国人民公安大学校徽" referrerPolicy="no-referrer"/><div><b>中国人民公安大学</b><small>PEOPLE'S PUBLIC SECURITY UNIVERSITY OF CHINA</small></div></div><div className="top-hint"><span className="pulse"/>点击词语，进入新闻与情感分析</div></div>
     </header>
     <section className="hero">
       <div><p className="eyebrow">TELECOM FRAUD DISCOURSE EVOLUTION</p><h1>电诈话术文本演化规律研究<br/><em>与防诈平台</em></h1></div>
@@ -302,6 +302,5 @@ export default function WordCloudStudio(){
     </footer>
   </main>
 }
-
 
 

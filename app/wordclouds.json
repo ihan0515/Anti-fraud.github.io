@@ -547,7 +547,7 @@
         "fontSize": 20
       },
       {
-        "word": "杀猪",
+        "word": "杀猪盘",
         "weight": 6.673,
         "risk": "low",
         "emotionStrength": 7.3077,
@@ -556,7 +556,7 @@
         "frequency": 18.2482,
         "coverage": 0.0283,
         "rank": 99,
-        "href": "keyword-detail.html?stage=2&keyword=杀猪",
+        "href": "keyword-detail.html?stage=2&keyword=杀猪盘",
         "fontSize": 20.6
       }
     ]
